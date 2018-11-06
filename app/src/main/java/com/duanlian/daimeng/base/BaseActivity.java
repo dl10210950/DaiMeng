@@ -1,32 +1,37 @@
 package com.duanlian.daimeng.base;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.view.Window;
+import android.widget.Toast;
 
 import com.duanlian.daimeng.R;
 import com.gyf.barlibrary.ImmersionBar;
+
+import butterknife.ButterKnife;
 
 /**
  * Created by 段炼 on 2017/9/12.
  * Description : activity基类
  */
 
-public abstract class BaseActivity extends FragmentActivity {
-    private ImmersionBar mImmersionBar;
+public abstract class BaseActivity extends FragmentActivity implements BaseView {
+    private ImmersionBar immersionBar;
+    private Toast toast;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //初始化沉浸式状态栏
-        mImmersionBar = ImmersionBar.with(this);
-        mImmersionBar
+        immersionBar = ImmersionBar.with(this);
+        immersionBar
                 .statusBarColor(R.color.colorPrimary)
                 .fitsSystemWindows(true)
                 .init();
         setContentView(setContentView());
+        // 初始化View注入
+        ButterKnife.bind(this);
         initView();
         initPresenter();
     }
@@ -49,10 +54,32 @@ public abstract class BaseActivity extends FragmentActivity {
     public abstract void initPresenter();
 
     @Override
+    public void showToast(int res) {
+        showToast(getString(res));
+    }
+
+    @Override
+    public void showToast(String msg) {
+        if (!isFinishing()) {
+            if (toast == null) {
+                toast = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
+            } else {
+                toast.setText(msg);
+            }
+
+            toast.show();
+        }
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mImmersionBar != null) {
-            mImmersionBar.destroy();
+        if (immersionBar != null) {
+            immersionBar.destroy();
         }
     }
 }

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.duanlian.daimeng.utils.LogU;
+
 /**
  * Created by 段炼 on 2017/9/12.
  * Description : 程序入口
@@ -17,6 +19,8 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        //开启日志
+        LogU.init(true);
     }
 
     public static Context getInstance() {
@@ -40,4 +44,6 @@ public class BaseApplication extends Application {
 
         }
     }
+
+
 }
